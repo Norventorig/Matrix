@@ -1,7 +1,7 @@
 from abc import ABC
 
 
-class Matrix_elem:
+class MatrixElem:
     def __init__(self, string_index: int, table_index: int) -> None:
         self._value = None
         self._string_index = string_index
@@ -35,7 +35,7 @@ class Matrix:
 
         for m in range(1, self._m_max + 1):
             for n in range(1, self._n_max + 1):
-                self._values.append(Matrix_elem(string_index=m, table_index=n))
+                self._values.append(MatrixElem(string_index=m, table_index=n))
 
         self._values = tuple(self._values)
 
@@ -141,7 +141,7 @@ class Matrix:
         return cls.__operation(first_matrix=first_matrix, another_matrix=another_matrix, op_sign="/")
 
 
-class find_determinator(ABC):
+class FindDeterminator(ABC):
     @classmethod
     def find_determinator(cls, matrix: Matrix):
         if matrix.n_max != matrix.m_max:
@@ -190,7 +190,7 @@ class find_determinator(ABC):
                             if j_index == index:
                                 i_elem.value = j_elem.value
 
-                determinator += i.value * (-1 ** (2 + count)) * find_determinator.find_determinator(side_matrix)
+                determinator += i.value * (-1 ** (2 + count)) * FindDeterminator.find_determinator(side_matrix)
 
             return determinator
 
@@ -226,7 +226,7 @@ def matrix_creation():
 while True:
     print('\t\t\t\tMATRIX _A_ CREATION PROCESS STARTED!')
     a_matrix = matrix_creation()
-    print(a_matrix, '\n\n\t\t\t\tMATRIX _A_ CREATION PROCESS FINISHED!\n', find_determinator.find_determinator(a_matrix))
+    print(a_matrix, '\n\n\t\t\t\tMATRIX _A_ CREATION PROCESS FINISHED!\n', FindDeterminator.find_determinator(a_matrix))
 
 # print('\n\t\t\t\tMATRIX _B_ CREATION PROCESS STARTED!')
 # b_matrix = matrix_creation()
