@@ -55,25 +55,17 @@ class Matrix:
         return output
 
     def __iter__(self):
-        self.m_ind = 1
-        self.n_ind = 0
+        self.value_index = -1
 
         return self
 
     def __next__(self):
-        if self.n_ind + 1 <= self.n_max:
-            self.n_ind += 1
-
-        elif self.n_ind + 1 > self.n_max and self.m_ind + 1 <= self.m_max:
-            self.n_ind = 1
-            self.m_ind += 1
-
-        else:
+        if self.value_index + 1 > ((self.n_max * self.m_max) - 1):
             raise StopIteration
 
-        for i in self._values:
-            if i.string_index == self.m_ind and i.table_index == self.n_ind:
-                return i
+        self.value_index += 1
+
+        return self.matrix[self.value_index]
 
     @property
     def matrix(self):
@@ -159,7 +151,7 @@ class FindDeterminator(ABC):
                 return cls.determinator_rec(matrix=matrix)
 
     @classmethod
-    def determinator_rec(cls, matrix):
+    def determinator_rec(cls, matrix: Matrix):
         if matrix.n_max == 3:
             return (matrix.matrix[0].value * matrix.matrix[4].value * matrix.matrix[8].value +
                     matrix.matrix[3].value * matrix.matrix[7].value * matrix.matrix[2].value +
@@ -171,26 +163,20 @@ class FindDeterminator(ABC):
         else:
             determinator = 0
 
-            for count, i in enumerate(matrix):
-                if count == matrix.n_max:
-                    return determinator
+            for i in range(matrix.n_max):
+                i_matrix_elem = matrix.matrix[i]
 
-                side_matrix = Matrix(matrix.m_max-1, matrix.n_max-1)
-                index = 0
+                side_matrix = Matrix(matrix.n_max - 1, matrix.m_max - 1)
+                side_matrix_values = [j.value for j in matrix
+                                      if
+                                      j.table_index != i_matrix_elem.table_index
+                                      and j.string_index != i_matrix_elem.string_index]
 
-                for i_elem in side_matrix:
+                generator = ((index, i_value) for index, i_value in enumerate(side_matrix))
+                for i_tuple in generator:
+                    i_tuple[1].value = side_matrix_values[i_tuple[0]]
 
-                    index += 1
-                    j_index = 0
-
-                    for j_elem in matrix:
-                        if j_elem.string_index != i.string_index and j_elem.table_index != i.table_index:
-                            j_index += 1
-
-                            if j_index == index:
-                                i_elem.value = j_elem.value
-
-                determinator += i.value * (-1 ** (2 + count)) * FindDeterminator.find_determinator(side_matrix)
+                determinator += i_matrix_elem.value * ((-1) ** (2 + i)) * FindDeterminator.find_determinator(side_matrix)
 
             return determinator
 
@@ -224,26 +210,5 @@ def matrix_creation():
 
 
 while True:
-    print('\t\t\t\tMATRIX _A_ CREATION PROCESS STARTED!')
-    a_matrix = matrix_creation()
-    print(a_matrix, '\n\n\t\t\t\tMATRIX _A_ CREATION PROCESS FINISHED!\n', FindDeterminator.find_determinator(a_matrix))
-
-# print('\n\t\t\t\tMATRIX _B_ CREATION PROCESS STARTED!')
-# b_matrix = matrix_creation()
-# print(b_matrix, '\n\n\t\t\t\tMATRIX _B_ CREATION PROCESS FINISHED!')
-#
-# print('\n\t\t\t\tMATRIX _C_ = MATRIX _A_ + MATRIX _B_ CREATION PROCESS STARTED!')
-# c_matrix = Matrix.plus(a_matrix, b_matrix)
-# print(c_matrix, '\n\n\t\t\t\tMATRIX _C_ CREATION PROCESS FINISHED!')
-#
-# print('\n\t\t\t\tMATRIX _D_ = MATRIX _A_ - MATRIX _B_ CREATION PROCESS STARTED!')
-# d_matrix = Matrix.minus(first_matrix=a_matrix, another_matrix=b_matrix)
-# print(d_matrix, '\n\n\t\t\t\tMATRIX _D_ CREATION PROCESS FINISHED!')
-#
-# print('\n\t\t\t\tMATRIX _E_ = MATRIX _A_ * MATRIX _B_ CREATION PROCESS STARTED!')
-# e_matrix = Matrix.multiply(a_matrix, b_matrix)
-# print(e_matrix, '\n\n\t\t\t\tMATRIX _E_ CREATION PROCESS FINISHED!')
-#
-# print('\n\t\t\t\tMATRIX _F_ = MATRIX _A_ / MATRIX _B_ CREATION PROCESS STARTED!')
-# c_matrix = Matrix.plus(a_matrix, b_matrix)
-# print(c_matrix, '\n\n\t\t\t\tMATRIX _F_ CREATION PROCESS FINISHED!')
+    matrix = matrix_creation()
+    print(f'\nМатрица: {matrix}\nОпределитель: {FindDeterminator.find_determinator(matrix)}')
