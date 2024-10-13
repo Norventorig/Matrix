@@ -94,12 +94,6 @@ class Matrix:
                 elif op_sign == "-":
                     gen = ((matrix_1_values[count] - matrix_2_values[count], i) for count, i in enumerate(output_matrix))
 
-                elif op_sign == "*":
-                    gen = ((matrix_1_values[count] * matrix_2_values[count], i) for count, i in enumerate(output_matrix))
-
-                elif op_sign == "/":
-                    gen = ((matrix_1_values[count] / matrix_2_values[count], i) for count, i in enumerate(output_matrix))
-
                 else:
                     raise Exception("\nНеправильный вызов функции!\n")
 
@@ -109,7 +103,7 @@ class Matrix:
                 return output_matrix
 
             else:
-                print("\nНевозможно сложение матриц разного разряда!\n")
+                print("\nНевозможно для матриц разного разряда!\n")
                 return None
 
         else:
@@ -123,14 +117,6 @@ class Matrix:
     @classmethod
     def minus(cls, first_matrix: object, another_matrix: object) -> object:
         return cls.__operation(first_matrix=first_matrix, another_matrix=another_matrix, op_sign="-")
-
-    @classmethod
-    def multiply(cls, first_matrix: object, another_matrix: object) -> object:
-        return cls.__operation(first_matrix=first_matrix, another_matrix=another_matrix, op_sign="*")
-
-    @classmethod
-    def separate(cls, first_matrix: object, another_matrix: object) -> object:
-        return cls.__operation(first_matrix=first_matrix, another_matrix=another_matrix, op_sign="/")
 
 
 class FindDeterminator(ABC):
@@ -209,6 +195,4 @@ def matrix_creation():
     return matrix
 
 
-while True:
-    matrix = matrix_creation()
-    print(f'\nМатрица: {matrix}\nОпределитель: {FindDeterminator.find_determinator(matrix)}')
+...
