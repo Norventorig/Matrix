@@ -79,24 +79,17 @@ class Matrix:
     def m_max(self):
         return self._m_max
 
-    @staticmethod
-    def __operation(op_sign: str, first_matrix: object, another_matrix: object) -> object:
-        if isinstance(another_matrix, Matrix) and isinstance(first_matrix, Matrix):
-            if another_matrix.n_max == first_matrix.n_max and another_matrix.m_max == first_matrix.m_max:
-                output_matrix = Matrix(strings_len=first_matrix.m_max, tables_len=first_matrix.n_max)
+    @classmethod
+    def plus(cls, first_object: object, second_object: object) -> object:
+        if isinstance(second_object, Matrix) and isinstance(first_object, Matrix):
+            if second_object.n_max == first_object.n_max and second_object.m_max == first_object.m_max:
 
-                matrix_1_values = [i.value for i in first_matrix]
-                matrix_2_values = [i.value for i in another_matrix]
+                output_matrix = Matrix(strings_len=first_object.m_max, tables_len=first_object.n_max)
 
-                if op_sign == "+":
-                    gen = ((matrix_1_values[count] + matrix_2_values[count], i) for count, i in enumerate(output_matrix))
+                matrix_1_values = [i.value for i in first_object]
+                matrix_2_values = [i.value for i in second_object]
 
-                elif op_sign == "-":
-                    gen = ((matrix_1_values[count] - matrix_2_values[count], i) for count, i in enumerate(output_matrix))
-
-                else:
-                    raise Exception("\nНеправильный вызов функции!\n")
-
+                gen = ((matrix_1_values[count] + matrix_2_values[count], i) for count, i in enumerate(output_matrix))
                 for i in gen:
                     i[1].value = i[0]
 
@@ -111,12 +104,93 @@ class Matrix:
             return None
 
     @classmethod
-    def plus(cls, first_matrix: object, another_matrix: object) -> object:
-        return cls.__operation(first_matrix=first_matrix, another_matrix=another_matrix, op_sign="+")
+    def minus(cls, first_object: object, second_object: object) -> object:
+        if isinstance(second_object, Matrix) and isinstance(first_object, Matrix):
+            if second_object.n_max == first_object.n_max and second_object.m_max == first_object.m_max:
+
+                output_matrix = Matrix(strings_len=first_object.m_max, tables_len=first_object.n_max)
+
+                matrix_1_values = [i.value for i in first_object]
+                matrix_2_values = [i.value for i in second_object]
+
+                gen = ((matrix_1_values[count] - matrix_2_values[count], i) for count, i in enumerate(output_matrix))
+                for i in gen:
+                    i[1].value = i[0]
+
+                return output_matrix
+
+            else:
+                print("\nНевозможно для матриц разного разряда!\n")
+                return None
+
+        else:
+            print("\nВ метод класса передан не экземпляр класса Matrix!\n")
+            return None
 
     @classmethod
-    def minus(cls, first_matrix: object, another_matrix: object) -> object:
-        return cls.__operation(first_matrix=first_matrix, another_matrix=another_matrix, op_sign="-")
+    def multiply_regular(cls, first_object: int, second_object: object) -> object:
+        if isinstance(second_object, Matrix):
+            output_matrix = Matrix(second_object.m_max, second_object.n_max)
+
+            matrix_2_values = [i.value for i in second_object]
+
+            gen = ((first_object * matrix_2_values[count], i) for count, i in enumerate(output_matrix))
+            for i in gen:
+                i[1].value = i[0]
+
+            return output_matrix
+
+        else:
+            print("\nВ метод класса передан не экземпляр класса Matrix!\n")
+            return None
+
+    @classmethod
+    def multiply_not_regular(cls, first_object: object, second_object: object) -> object:
+        if isinstance(second_object, Matrix) and isinstance(first_object, Matrix):
+            if second_object.m_max == first_object.n_max:
+
+                print(f"Произведение матриц: {first_object}\n{second_object}")
+
+                output_matrix = Matrix(strings_len=first_object.m_max, tables_len=second_object.n_max)
+
+                first_object_first_index = 0 - first_object.n_max
+                second_object_first_index = -1
+
+                for count, i in enumerate(output_matrix):
+                    print(f'\na{i.string_index}{i.table_index} = ', end='')
+
+                    if count % output_matrix.n_max == 0:
+                        second_object_first_index = -1
+                        first_object_first_index += first_object.n_max
+
+                    second_object_first_index += 1
+
+                    i_elem_value = 0
+                    first_object_index = first_object_first_index
+                    second_object_index = second_object_first_index
+
+                    for _ in range(first_object.n_max):
+                        print(f"{first_object.matrix[first_object_index].value} * "
+                              f"{second_object.matrix[second_object_index].value}", end=' + ')
+
+                        i_elem_value += first_object.matrix[first_object_index].value * \
+                                        second_object.matrix[second_object_index].value
+
+                        first_object_index += 1
+                        second_object_index += second_object.n_max
+
+                    i.value = i_elem_value
+                    print(f'0 = {i.value}')
+
+                return output_matrix
+
+            else:
+                print("\nНевозможно для матриц разного разряда!\n")
+                return None
+
+        else:
+            print("\nВ метод класса передан не экземпляр класса Matrix!\n")
+            return None
 
 
 class FindDeterminator(ABC):
@@ -195,4 +269,55 @@ def matrix_creation():
     return matrix
 
 
-...
+while True:
+    while True:
+        try:
+            answer = int(input("\n1)Сложение матриц"
+                               "\n2)Вычитание матриц"
+                               "\n3)Умножение матриц"
+                               "\n4)Умножение матрицы"
+                               "\n5)Решение линейного уравнения"
+                               "\nВаш вариант: "))
+
+            if answer > 5 or answer < 1:
+                raise ValueError
+
+        except ValueError:
+            print('\nВвод не корректен\n')
+
+        else:
+            if answer == 1:
+                first_parameter = matrix_creation()
+                second_parameter = matrix_creation()
+
+                print(Matrix.plus(first_object=first_parameter, second_object=second_parameter))
+
+            elif answer == 2:
+                first_parameter = matrix_creation()
+                second_parameter = matrix_creation()
+
+                print(Matrix.minus(first_object=first_parameter, second_object=second_parameter))
+
+            elif answer == 3:
+                first_parameter = matrix_creation()
+                second_parameter = matrix_creation()
+
+                print(Matrix.multiply_not_regular(first_object=first_parameter, second_object=second_parameter))
+
+            elif answer == 4:
+                while True:
+                    try:
+                        first_parameter = int(input("\nВведите число на которое будет умножена матрица: "))
+
+                    except ValueError:
+                        print('\nВвод не корректен\n')
+
+                    else:
+                        break
+
+                second_parameter = matrix_creation()
+
+                print(Matrix.multiply_regular(first_object=first_parameter, second_object=second_parameter))
+
+            elif answer == 5:
+                pass
