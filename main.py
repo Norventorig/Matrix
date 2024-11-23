@@ -128,7 +128,7 @@ class Matrix:
             return None
 
     @classmethod
-    def multiply_regular(cls, first_object: int, second_object: object) -> object:
+    def multiplication(cls, first_object: int, second_object: object) -> object:
         if isinstance(second_object, Matrix):
             output_matrix = Matrix(second_object.m_max, second_object.n_max)
 
@@ -145,7 +145,7 @@ class Matrix:
             return None
 
     @classmethod
-    def multiply_not_regular(cls, first_object: object, second_object: object) -> object:
+    def matrix_multiplication(cls, first_object: object, second_object: object) -> object:
         if isinstance(second_object, Matrix) and isinstance(first_object, Matrix):
             if second_object.m_max == first_object.n_max:
 
@@ -197,11 +197,12 @@ class FindDeterminator(ABC):
     @classmethod
     def find_determinator(cls, matrix: Matrix):
         if matrix.n_max != matrix.m_max:
+            print('\nМатрица не квадратная!\n')
             return None
 
         else:
-            for i in (i.value for i in matrix.matrix):
-                if i is None:
+            for i in matrix.matrix:
+                if i.value is None:
                     return None
 
             if matrix.n_max == 2:
@@ -277,9 +278,10 @@ while True:
                                "\n3)Умножение матриц"
                                "\n4)Умножение матрицы"
                                "\n5)Решение линейного уравнения"
+                               "\n6)Найти детерминатор матрицы"
                                "\nВаш вариант: "))
 
-            if answer > 5 or answer < 1:
+            if answer > 6 or answer < 1:
                 raise ValueError
 
         except ValueError:
@@ -290,19 +292,19 @@ while True:
                 first_parameter = matrix_creation()
                 second_parameter = matrix_creation()
 
-                print(Matrix.plus(first_object=first_parameter, second_object=second_parameter))
+                print('\n', Matrix.plus(first_object=first_parameter, second_object=second_parameter))
 
             elif answer == 2:
                 first_parameter = matrix_creation()
                 second_parameter = matrix_creation()
 
-                print(Matrix.minus(first_object=first_parameter, second_object=second_parameter))
+                print('\n', Matrix.minus(first_object=first_parameter, second_object=second_parameter))
 
             elif answer == 3:
                 first_parameter = matrix_creation()
                 second_parameter = matrix_creation()
 
-                print(Matrix.multiply_not_regular(first_object=first_parameter, second_object=second_parameter))
+                print('\n', Matrix.matrix_multiplication(first_object=first_parameter, second_object=second_parameter))
 
             elif answer == 4:
                 while True:
@@ -317,7 +319,15 @@ while True:
 
                 second_parameter = matrix_creation()
 
-                print(Matrix.multiply_regular(first_object=first_parameter, second_object=second_parameter))
+                print('\n', Matrix.multiplication(first_object=first_parameter, second_object=second_parameter))
 
             elif answer == 5:
-                pass
+                print('\nСоздание матрицы A:')
+                first_parameter = matrix_creation()
+
+                print('\nСоздание матрицы B:')
+                second_parameter = matrix_creation()
+
+            elif answer == 6:
+                first_parameter = matrix_creation()
+                print('\n', FindDeterminator.find_determinator(first_parameter))
