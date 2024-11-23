@@ -262,6 +262,38 @@ class Matrix:
             print("\nВ метод класса передан не экземпляр класса Matrix!\n")
             return None
 
+    @classmethod
+    def equation(cls) -> object:
+        print('\nСоздание матрицы A:')
+        first_object = Matrix.matrix_creation()
+
+        print('\nСоздание матрицы B:')
+        second_object = Matrix.matrix_creation()
+
+        if first_object.n_max == first_object.m_max and first_object.n_max == second_object.m_max:
+            determinator_a = Matrix.find_determinator(first_object)
+            output_matrix = Matrix(second_object.m_max, second_object.n_max)
+
+            for i_second_object_index in range(second_object.m_max):
+                temp_matrix = Matrix(first_object.m_max, first_object.n_max)
+
+                for j_m in range(first_object.m_max):
+                    for j_n in range(first_object.n_max):
+                        if j_n == i_second_object_index:
+                            temp_matrix.matrix[j_m * temp_matrix.n_max + j_n].value = second_object.matrix[j_m].value
+
+                        else:
+                            temp_matrix.matrix[j_m * temp_matrix.n_max + j_n].value = \
+                                first_object.matrix[j_m * temp_matrix.n_max + j_n].value
+
+                output_matrix.matrix[i_second_object_index].value = \
+                    Matrix.find_determinator(temp_matrix) / determinator_a
+
+            return output_matrix
+
+        else:
+            return None
+
 
 while True:
     while True:
@@ -315,11 +347,7 @@ while True:
                 print('\n', Matrix.multiplication(first_object=first_parameter, second_object=second_parameter))
 
             elif answer == 5:
-                print('\nСоздание матрицы A:')
-                first_parameter = Matrix.matrix_creation()
-
-                print('\nСоздание матрицы B:')
-                second_parameter = Matrix.matrix_creation()
+                print('\n', Matrix.equation())
 
             elif answer == 6:
                 first_parameter = Matrix.matrix_creation()
