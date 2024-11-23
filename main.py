@@ -1,6 +1,3 @@
-from abc import ABC
-
-
 class MatrixElem:
     def __init__(self, string_index: int, table_index: int) -> None:
         self._value = None
@@ -67,6 +64,34 @@ class Matrix:
 
         return self.matrix[self.value_index]
 
+    @classmethod
+    def matrix_creation(cls):
+        while True:
+            try:
+                strings_len = int(input("\nВведите M матрицы: "))
+                table_len = int(input("Введите N матрицы: "))
+
+            except ValueError:
+                print('\nВводите цифры!\n')
+
+            else:
+                matrix = Matrix(strings_len=strings_len, tables_len=table_len)
+                break
+
+        for i_elem in matrix:
+            while True:
+                try:
+                    value = int(input(f"\nВведите значение a{i_elem.string_index}{i_elem.table_index}: "))
+
+                except ValueError:
+                    print("\nВводите цифры!\n")
+
+                else:
+                    i_elem.value = value
+                    break
+
+        return matrix
+
     @property
     def matrix(self):
         return self._values
@@ -78,6 +103,51 @@ class Matrix:
     @property
     def m_max(self):
         return self._m_max
+
+    @classmethod
+    def find_determinator(cls, matrix: object) -> object:
+        if isinstance(matrix, Matrix) and matrix.n_max == matrix.m_max:
+            for i in matrix.matrix:
+                if i.value is None:
+                    return None
+
+            if matrix.n_max == 1:
+                return matrix.matrix[0].value
+
+            elif matrix.n_max == 2:
+                return matrix.matrix[0].value * matrix.matrix[3].value - matrix.matrix[1].value * matrix.matrix[2].value
+
+            elif matrix.n_max == 3:
+                return (matrix.matrix[0].value * matrix.matrix[4].value * matrix.matrix[8].value +
+                        matrix.matrix[3].value * matrix.matrix[7].value * matrix.matrix[2].value +
+                        matrix.matrix[1].value * matrix.matrix[5].value * matrix.matrix[6].value -
+                        matrix.matrix[2].value * matrix.matrix[4].value * matrix.matrix[6].value -
+                        matrix.matrix[7].value * matrix.matrix[5].value * matrix.matrix[0].value -
+                        matrix.matrix[3].value * matrix.matrix[1].value * matrix.matrix[8].value)
+
+            else:
+                determinator = 0
+
+                for i in range(matrix.n_max):
+                    i_matrix_elem = matrix.matrix[i]
+
+                    side_matrix = Matrix(matrix.n_max - 1, matrix.m_max - 1)
+                    side_matrix_values = [j.value for j in matrix
+                                          if
+                                          j.table_index != i_matrix_elem.table_index
+                                          and j.string_index != i_matrix_elem.string_index]
+
+                    generator = ((index, i_value) for index, i_value in enumerate(side_matrix))
+                    for i_tuple in generator:
+                        i_tuple[1].value = side_matrix_values[i_tuple[0]]
+
+                    determinator += i_matrix_elem.value * ((-1) ** (2 + i)) * Matrix.find_determinator(
+                        side_matrix)
+
+                return determinator
+
+        else:
+            return None
 
     @classmethod
     def plus(cls, first_object: object, second_object: object) -> object:
@@ -173,8 +243,8 @@ class Matrix:
                         print(f"{first_object.matrix[first_object_index].value} * "
                               f"{second_object.matrix[second_object_index].value}", end=' + ')
 
-                        i_elem_value += first_object.matrix[first_object_index].value * \
-                                        second_object.matrix[second_object_index].value
+                        i_elem_value += (first_object.matrix[first_object_index].value *
+                                         second_object.matrix[second_object_index].value)
 
                         first_object_index += 1
                         second_object_index += second_object.n_max
@@ -193,83 +263,6 @@ class Matrix:
             return None
 
 
-class FindDeterminator(ABC):
-    @classmethod
-    def find_determinator(cls, matrix: Matrix):
-        if matrix.n_max != matrix.m_max:
-            print('\nМатрица не квадратная!\n')
-            return None
-
-        else:
-            for i in matrix.matrix:
-                if i.value is None:
-                    return None
-
-            if matrix.n_max == 2:
-                return matrix.matrix[0].value * matrix.matrix[3].value - matrix.matrix[1].value * matrix.matrix[2].value
-
-            elif matrix.n_max >= 3:
-                return cls.determinator_rec(matrix=matrix)
-
-    @classmethod
-    def determinator_rec(cls, matrix: Matrix):
-        if matrix.n_max == 3:
-            return (matrix.matrix[0].value * matrix.matrix[4].value * matrix.matrix[8].value +
-                    matrix.matrix[3].value * matrix.matrix[7].value * matrix.matrix[2].value +
-                    matrix.matrix[1].value * matrix.matrix[5].value * matrix.matrix[6].value -
-                    matrix.matrix[2].value * matrix.matrix[4].value * matrix.matrix[6].value -
-                    matrix.matrix[7].value * matrix.matrix[5].value * matrix.matrix[0].value -
-                    matrix.matrix[3].value * matrix.matrix[1].value * matrix.matrix[8].value)
-
-        else:
-            determinator = 0
-
-            for i in range(matrix.n_max):
-                i_matrix_elem = matrix.matrix[i]
-
-                side_matrix = Matrix(matrix.n_max - 1, matrix.m_max - 1)
-                side_matrix_values = [j.value for j in matrix
-                                      if
-                                      j.table_index != i_matrix_elem.table_index
-                                      and j.string_index != i_matrix_elem.string_index]
-
-                generator = ((index, i_value) for index, i_value in enumerate(side_matrix))
-                for i_tuple in generator:
-                    i_tuple[1].value = side_matrix_values[i_tuple[0]]
-
-                determinator += i_matrix_elem.value * ((-1) ** (2 + i)) * FindDeterminator.find_determinator(side_matrix)
-
-            return determinator
-
-
-def matrix_creation():
-    while True:
-        try:
-            strings_len = int(input("\nВведите M матрицы: "))
-            table_len = int(input("Введите N матрицы: "))
-
-        except ValueError:
-            print('\nВводите цифры!\n')
-
-        else:
-            matrix = Matrix(strings_len=strings_len, tables_len=table_len)
-            break
-
-    for i_elem in matrix:
-        while True:
-            try:
-                value = int(input(f"\nВведите значение a{i_elem.string_index}{i_elem.table_index}: "))
-
-            except ValueError:
-                print("\nВводите цифры!\n")
-
-            else:
-                i_elem.value = value
-                break
-
-    return matrix
-
-
 while True:
     while True:
         try:
@@ -278,7 +271,7 @@ while True:
                                "\n3)Умножение матриц"
                                "\n4)Умножение матрицы"
                                "\n5)Решение линейного уравнения"
-                               "\n6)Найти детерминатор матрицы"
+                               "\n6)Найти определитель матрицы"
                                "\nВаш вариант: "))
 
             if answer > 6 or answer < 1:
@@ -289,20 +282,20 @@ while True:
 
         else:
             if answer == 1:
-                first_parameter = matrix_creation()
-                second_parameter = matrix_creation()
+                first_parameter = Matrix.matrix_creation()
+                second_parameter = Matrix.matrix_creation()
 
                 print('\n', Matrix.plus(first_object=first_parameter, second_object=second_parameter))
 
             elif answer == 2:
-                first_parameter = matrix_creation()
-                second_parameter = matrix_creation()
+                first_parameter = Matrix.matrix_creation()
+                second_parameter = Matrix.matrix_creation()
 
                 print('\n', Matrix.minus(first_object=first_parameter, second_object=second_parameter))
 
             elif answer == 3:
-                first_parameter = matrix_creation()
-                second_parameter = matrix_creation()
+                first_parameter = Matrix.matrix_creation()
+                second_parameter = Matrix.matrix_creation()
 
                 print('\n', Matrix.matrix_multiplication(first_object=first_parameter, second_object=second_parameter))
 
@@ -317,17 +310,17 @@ while True:
                     else:
                         break
 
-                second_parameter = matrix_creation()
+                second_parameter = Matrix.matrix_creation()
 
                 print('\n', Matrix.multiplication(first_object=first_parameter, second_object=second_parameter))
 
             elif answer == 5:
                 print('\nСоздание матрицы A:')
-                first_parameter = matrix_creation()
+                first_parameter = Matrix.matrix_creation()
 
                 print('\nСоздание матрицы B:')
-                second_parameter = matrix_creation()
+                second_parameter = Matrix.matrix_creation()
 
             elif answer == 6:
-                first_parameter = matrix_creation()
-                print('\n', FindDeterminator.find_determinator(first_parameter))
+                first_parameter = Matrix.matrix_creation()
+                print('\n', Matrix.find_determinator(first_parameter))
