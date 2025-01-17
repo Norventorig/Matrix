@@ -244,26 +244,27 @@ class Matrix:
 
     @classmethod
     def equation(cls, first_object: object, second_object: object) -> object:
-        if first_object.n_max == first_object.m_max and first_object.n_max == second_object.m_max:
-            determinator_a = Matrix.find_determinator(first_object)
-            output_matrix = Matrix(second_object.m_max, second_object.n_max)
+        if isinstance(second_object, Matrix) and isinstance(first_object, Matrix):
+            if first_object.n_max == first_object.m_max and first_object.n_max == second_object.m_max:
+                determinator_a = Matrix.find_determinator(first_object)
+                output_matrix = Matrix(second_object.m_max, second_object.n_max)
 
-            for i_second_object_index in range(second_object.m_max):
-                temp_matrix = Matrix(first_object.m_max, first_object.n_max)
+                for i_second_object_index in range(second_object.m_max):
+                    temp_matrix = Matrix(first_object.m_max, first_object.n_max)
 
-                for j_m in range(first_object.m_max):
-                    for j_n in range(first_object.n_max):
-                        if j_n == i_second_object_index:
-                            temp_matrix.matrix[j_m * temp_matrix.n_max + j_n].value = second_object.matrix[j_m].value
+                    for j_m in range(first_object.m_max):
+                        for j_n in range(first_object.n_max):
+                            if j_n == i_second_object_index:
+                                temp_matrix.matrix[j_m * temp_matrix.n_max + j_n].value = second_object.matrix[j_m].value
 
-                        else:
-                            temp_matrix.matrix[j_m * temp_matrix.n_max + j_n].value = \
-                                first_object.matrix[j_m * temp_matrix.n_max + j_n].value
+                            else:
+                                temp_matrix.matrix[j_m * temp_matrix.n_max + j_n].value = \
+                                    first_object.matrix[j_m * temp_matrix.n_max + j_n].value
 
-                output_matrix.matrix[i_second_object_index].value = \
-                    Matrix.find_determinator(temp_matrix) / determinator_a
+                    output_matrix.matrix[i_second_object_index].value = \
+                        Matrix.find_determinator(temp_matrix) / determinator_a
 
-            return output_matrix
+                return output_matrix
 
-        else:
-            return None
+            else:
+                return None
