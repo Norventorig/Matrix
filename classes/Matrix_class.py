@@ -1,3 +1,6 @@
+from MatrixElem_class import MatrixElem
+
+
 class Matrix:
     def __init__(self, strings_len: int, tables_len: int) -> None:
         self._m_max = strings_len
@@ -82,11 +85,11 @@ class Matrix:
         return self._m_max
 
     @classmethod
-    def find_determinator(cls, matrix: object) -> object:
+    def find_determinator(cls, matrix: object) -> float:
         if isinstance(matrix, Matrix) and matrix.n_max == matrix.m_max:
             for i in matrix.matrix:
                 if i.value is None:
-                    return None
+                    raise Exception
 
             if matrix.n_max == 1:
                 return matrix.matrix[0].value
@@ -124,7 +127,7 @@ class Matrix:
                 return determinator
 
         else:
-            return None
+            raise Exception
 
     @classmethod
     def plus(cls, first_object: object, second_object: object) -> object:
