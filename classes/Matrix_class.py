@@ -243,13 +243,7 @@ class Matrix:
             return None
 
     @classmethod
-    def equation(cls) -> object:
-        print('\nСоздание матрицы A:')
-        first_object = Matrix.matrix_creation()
-
-        print('\nСоздание матрицы B:')
-        second_object = Matrix.matrix_creation()
-
+    def equation(cls, first_object: object, second_object: object) -> object:
         if first_object.n_max == first_object.m_max and first_object.n_max == second_object.m_max:
             determinator_a = Matrix.find_determinator(first_object)
             output_matrix = Matrix(second_object.m_max, second_object.n_max)
