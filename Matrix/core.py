@@ -8,7 +8,8 @@ def _launch():
     while True:
         while True:
             try:
-                answer = int(input("\n1)Сложение матриц"
+                answer = int(input("0)Отключение"
+                                   "\n1)Сложение матриц"
                                    "\n2)Вычитание матриц"
                                    "\n3)Умножение 2 матриц"
                                    "\n4)Умножение матрицы на число"
@@ -16,7 +17,7 @@ def _launch():
                                    "\n6)Найти определитель матрицы"
                                    "\nВаш ответ: "))
 
-                if answer > 6 or answer < 1:
+                if answer > 6 or answer < 0:
                     raise ValueError
 
             except ValueError:
